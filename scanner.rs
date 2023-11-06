@@ -90,6 +90,9 @@ fn main() {
             }
 
             if number.contains('.') {
+                if number.matches('.').count()>1||number.ends_with('.'){
+                    panic!("エラー {}行目:小数点が2つ以上か末尾に含まれています.",line_number);
+                }
                 println!("{}\t10\tTK_FLOAT\t{}",line_number,number); // 浮動小数点数
             } else {
                 println!("{}\t9\tTK_INTEGER\t{}",line_number,number); // 整数
