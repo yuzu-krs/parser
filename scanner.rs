@@ -66,6 +66,12 @@ fn main() {
                     string_content.push(next_char);
                 }
             }
+
+            //2つ目の'"'が見つからないまま終端に達した場合のエラー処理
+            if chars.next().is_none(){
+                panic!("エラー {}行目:ダブルクォートが閉じられていません",line_number);
+            }
+            
         }else if c == ':' {
             chars.next(); // ':'を消費する
 
@@ -74,6 +80,8 @@ fn main() {
                 if next_char == '=' {
                     chars.next(); //'='を消費する
                     println!("{}\t22\tTK_COLON_EQUAL",line_number);
+                }else{
+                    panic!("エラー {}行目:':'の後に'='がありません",line_number);
                 }
             }
         }else if is_special_character(c,line_number){
@@ -91,7 +99,7 @@ fn main() {
 
             if number.contains('.') {
                 if number.matches('.').count()>1||number.ends_with('.'){
-                    panic!("エラー {}行目:小数点が2つ以上か末尾に含まれています.",line_number);
+                    panic!("エラー {}行目:小数点が2つ以上か末尾に含まれています",line_number);
                 }
                 println!("{}\t10\tTK_FLOAT\t{}",line_number,number); // 浮動小数点数
             } else {
@@ -121,9 +129,9 @@ fn main() {
 
 
         }else {
-            // 通常の処理
-            println!("{}", c);
-            chars.next();
+            
+            panic!("エラー {}行目:文法が間違っています",line_number);
+
         }
     }
 }
