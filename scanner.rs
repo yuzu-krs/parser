@@ -27,7 +27,7 @@ fn main() {
         .expect("something went wrong reading the file");
 
     /*読み取った文字列の各文字にアクセスするための
-    charsイテレータを作する．*/
+    charsイテレータを作成する．*/
     let mut chars = contents.chars().peekable();
 
     //行番号
@@ -68,7 +68,7 @@ fn main() {
             }
 
             //2つ目の'"'が見つからないまま終端に達した場合のエラー処理
-            if chars.next().is_none(){
+            if chars.peek().is_none(){
                 panic!("エラー {}行目:ダブルクォートが閉じられていません",line_number);
             }
             
