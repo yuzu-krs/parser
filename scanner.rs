@@ -3,8 +3,13 @@ use std::fs::File;
 use std::io::prelude::*;
 
 fn main() {
+
     // コマンドライン引数からファイル名を取得
     let args: Vec<String> = env::args().collect();
+
+    //構文解析に使うベクタ
+    let mut parser: Vec<i32> = Vec::new();
+
 
     // プログラム名と引数が足りない場合は標準エラーメッセージを表示して終了
     if args.len() < 2 {
@@ -60,7 +65,7 @@ fn main() {
             //2つ目の'"'が見つけるまで
             while let Some(next_char)=chars.next(){
                 if next_char == '"' {
-                    println!("{}\t11\tTK_STRING\t{}",line_number,string_content);
+                    parser.push(11);
                     break;
                 }else{
                     string_content.push(next_char);
@@ -79,12 +84,12 @@ fn main() {
             if let Some(&next_char) = chars.peek() {
                 if next_char == '=' {
                     chars.next(); //'='を消費する
-                    println!("{}\t22\tTK_COLON_EQUAL",line_number);
+                    parser.push(22);
                 }else{
                     panic!("エラー {}行目:':'の後に'='がありません",line_number);
                 }
             }
-        }else if is_special_character(c,line_number){
+        }else if is_special_character(c,&mut parser){
             chars.next();
         } else if c.is_digit(10) { //10進数の数字であれば
             let mut number = String::new();
@@ -101,9 +106,9 @@ fn main() {
                 if number.matches('.').count()>1||number.ends_with('.'){
                     panic!("エラー {}行目:小数点が2つ以上か末尾に含まれています",line_number);
                 }
-                println!("{}\t10\tTK_FLOAT\t{}",line_number,number); // 浮動小数点数
+                parser.push(10); // 浮動小数点数
             } else {
-                println!("{}\t9\tTK_INTEGER\t{}",line_number,number); // 整数
+                parser.push(9); // 整数
             }
 
         }else if is_alphabet_or_underscore(c){
@@ -118,13 +123,13 @@ fn main() {
             }
 
             match letters.as_str(){
-                "var"=>println!("{}\t2\tTK_VAR",line_number),
-                "read"=>println!("{}\t3\tTK_READ",line_number),
-                "print"=>println!("{}\t4\tTK_PRINT",line_number),
-                "println"=>println!("{}\t5\tTK_PRINTLN",line_number),
-                "div"=>println!("{}\t6\tTK_DIV",line_number),
-                "repeat"=>println!("{}\t7\tTK_REPEAT",line_number),
-                _=>println!("{}\t1\tTK_IDENTIFIER\t{}",line_number,letters),
+                "var"=>parser.push(2),
+                "read"=>parser.push(3),
+                "print"=>parser.push(4),
+                "println"=>parser.push(5),
+                "div"=>parser.push(6),
+                "repeat"=>parser.push(7),
+                _=>parser.push(1),
             }
 
 
@@ -134,6 +139,17 @@ fn main() {
 
         }
     }
+
+
+    /*ここから構文解析*/
+
+    // ベクタの最初から最後まで表示
+    let mut iterator = parser.iter();
+
+    while let Some(element) = iterator.next() {
+        println!("{}", element);
+    }
+    
 }
 
 
@@ -151,18 +167,18 @@ fn is_white_space(c:char)->bool{
 }
 
 // 記号
-fn is_special_character(c: char, line_number: usize) -> bool {
+fn is_special_character(c: char, parser:&mut Vec<i32>) -> bool {
     match c {
-        '+' => { println!("{}\t12\tTK_PLUS",line_number); true },
-        '-' => { println!("{}\t13\tTK_MINUS",line_number); true },
-        '*' => { println!("{}\t14\tTK_MULTIPLY",line_number); true },
-        '/' => { println!("{}\t15\tTK_DIVIDE",line_number); true },
-        '%' => { println!("{}\t16\tTK_MODULUS",line_number); true },
-        '(' => { println!("{}\t17\tTK_LEFTPAREN",line_number); true },
-        ')' => { println!("{}\t18\tTK_RIGHTPAREN",line_number); true },
-        ';' => { println!("{}\t19\tTK_SEMICOLON",line_number); true },
-        ',' => { println!("{}\t20\tTK_COMMA",line_number); true },
-        '@' => { println!("{}\t21\tTK_AT",line_number); true },
+        '+' => { parser.push(12); true },
+        '-' => { parser.push(13); true },
+        '*' => { parser.push(14); true },
+        '/' => { parser.push(15); true },
+        '%' => { parser.push(16); true },
+        '(' => { parser.push(17); true },
+        ')' => { parser.push(18); true },
+        ';' => { parser.push(19); true },
+        ',' => { parser.push(20); true },
+        '@' => { parser.push(21); true },
         _ => {
             false
         }
