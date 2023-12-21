@@ -140,8 +140,9 @@ fn main() {
         }
     }
 
-
+    /*###############*/
     /*ここから構文解析*/
+    /*###############*/
 
     // ベクタの最初から最後まで表示
     let mut iterator = parser.iter();
@@ -149,6 +150,13 @@ fn main() {
     while let Some(element) = iterator.next() {
         println!("{}", element);
     }
+
+    //構文解析のスタート
+    program(&mut iterator);
+
+
+
+    
     
 }
 
@@ -183,4 +191,101 @@ fn is_special_character(c: char, parser:&mut Vec<i32>) -> bool {
             false
         }
     }
+}
+
+/*プログラム*/
+fn program(&mut Vec<i32>){
+
+
+}
+
+/*解釈単位*/
+fn unit_of_interpretation(&mut Vec<i32>){
+
+}
+
+/*変数代入*/
+fn variable_assignment(&mut Vec<i32>){
+
+}
+
+/*変数名*/
+fn variable_name(&mut Vec<i32>){
+
+
+}
+
+/*式*/
+fn formula(&mut Vec<i32>){
+
+
+}
+
+/*項*/
+fn term(&mut Vec<i32>){
+
+
+}
+
+
+/*因子*/
+fn factor(&mut Vec<i32>){
+
+
+}
+
+/*変数宣言*/
+fn variable_declaration(&mut Vec<i32>){
+
+
+}
+
+
+/*変数入力*/
+fn variable_input(&mut Vec<i32>){
+
+}
+
+/*出力指定*/
+fn output_specification(&mut Vec<i32>){
+
+}
+
+/*出力単位の並び*/
+fn output_unit_sequence(&mut Vec<i32>){
+
+
+}
+
+
+/*出力単位*/
+fn output_unit(&mut Vec<i32>){
+
+
+}
+
+/*repeat*/
+fn repeat(&mut Vec<i32>){
+
+
+}
+
+
+/*関数呼出*/
+fn function_call(&mut Vec<i32>){
+
+}
+
+
+/*関数名*/
+fn function_name(&mut Vec<i32>){
+
+}
+
+
+/*式の並び*/
+fn sequence_of_expressions(&mut Vec<i32>){
+
+
+
 }
