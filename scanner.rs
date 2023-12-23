@@ -144,12 +144,12 @@ fn main() {
     /*ここから構文解析*/
     /*###############*/
 
+
+
     // ベクタの最初から最後まで表示
     let mut iterator = parser.iter();
 
-    while let Some(element) = iterator.next() {
-        println!("{}", element);
-    }
+
 
     //構文解析のスタート
     program(&mut iterator);
@@ -193,98 +193,175 @@ fn is_special_character(c: char, parser:&mut Vec<i32>) -> bool {
     }
 }
 
+
+//iter.next() で次のトークンへ
+
+/*トークン一覧
+1. 識別子
+2. var
+3. read
+4. print
+5. println
+6. div
+7. repeat
+9. 整数
+10. 実数
+11. 文字列
+12. +
+13. -
+14. *
+15. /
+16. %
+17. (
+18. )
+19. ;
+20. ,
+21. @
+22. :=
+*/
+
+
+
 /*プログラム*/
-fn program(&mut Vec<i32>){
+// {<解釈単位>“;”}
+// “識別子”, “var”, “read”, “print”, “println”, “repeat”
+fn program(tokens: &mut std::slice::Iter<i32>) {
+    // イテレータをpeekableに変換
+    let mut token = tokens.peekable();
 
+    // 先読みが可能かチェックして表示
+    if let Some(&next_token) = token.peek() {
+        println!("{}", next_token);
+        token.next();
+    }
 
+    // 同様に次のトークンも表示
+    if let Some(&next_token) = token.peek() {
+        println!("{}", next_token);
+        token.next();
+    }
+    unit_of_interpretation(&mut token);
 }
 
-/*解釈単位*/
-fn unit_of_interpretation(&mut Vec<i32>){
 
+/*解釈単位*/
+// <変数代入> | <変数宣言> | <変数入力> | <出力指定> | <repeat 文>
+// “識別子”, “var”, “read”, “print”, “println”, “repeat”
+fn unit_of_interpretation(tokens: &mut std::iter::Peekable<&mut std::slice::Iter<i32>>) {
+    // ここで最後の部分を実行
+    if let Some(&next_token) = tokens.peek() {
+        println!("{}", next_token);
+        tokens.next();
+    }
 }
 
 /*変数代入*/
-fn variable_assignment(&mut Vec<i32>){
+// <変数名> “:=” <式>
+// “識別子”
+fn variable_assignment(parser:&mut Vec<i32>){
 
 }
 
 /*変数名*/
-fn variable_name(&mut Vec<i32>){
+// "識別子"
+// “識別子”
+fn variable_name(parser:&mut Vec<i32>){
 
 
 }
 
 /*式*/
-fn formula(&mut Vec<i32>){
+//  [“+” | “-”] <項> {“+” <項> | “-” <項> }
+// “+”, “-”, “(”, “整数”, “実数”, “識別子”, “@”
+fn formula(parser:&mut Vec<i32>){
 
 
 }
 
 /*項*/
-fn term(&mut Vec<i32>){
+// <因子> {“*” <因子> | “/” <因子> | “div” <因子> | “%” <因子>}
+// “(”, “整数”, “実数”, “識別子”, “@”
+fn term(parser:&mut Vec<i32>){
 
 
 }
 
 
 /*因子*/
-fn factor(&mut Vec<i32>){
+// “(” <式>“)” | “整数” | “実数” | <変数名> | <関数呼出>
+// “(”, “整数”, “実数”, “識別子”, “@”
+fn factor(parser:&mut Vec<i32>){
 
 
 }
 
 /*変数宣言*/
-fn variable_declaration(&mut Vec<i32>){
+//  “var” <変数名> [“:=” <式>]
+// “var”
+fn variable_declaration(parser:&mut Vec<i32>){
 
 
 }
 
 
 /*変数入力*/
-fn variable_input(&mut Vec<i32>){
+// “read” “(” <変数名> “)”
+// “read”
+fn variable_input(parser:&mut Vec<i32>){
 
 }
 
 /*出力指定*/
-fn output_specification(&mut Vec<i32>){
+// “print” “(”<出力単位の並び> “)” | “println” “(”<出力単位の並び> “)”
+// “print”, “println”
+fn output_specification(parser:&mut Vec<i32>){
 
 }
 
 /*出力単位の並び*/
-fn output_unit_sequence(&mut Vec<i32>){
+// ε | <出力単位> {“,” <出力単位>}
+fn output_unit_sequence(parser:&mut Vec<i32>){
 
 
 }
 
 
 /*出力単位*/
-fn output_unit(&mut Vec<i32>){
+// <式> | “文字列”
+//  “文字列”, “+”, “-”, “(”, “整数”, “実数”, “識別子”, “@”
+fn output_unit(parser:&mut Vec<i32>){
 
 
 }
 
 /*repeat*/
-fn repeat(&mut Vec<i32>){
+// “repeat” <式> <変数代入>
+// “repeat”
+fn repeat(parser:&mut Vec<i32>){
 
 
 }
 
 
 /*関数呼出*/
-fn function_call(&mut Vec<i32>){
+//  “@” <関数名> “(” <式の並び> “)”
+// "@"
+fn function_call(parser:&mut Vec<i32>){
 
 }
 
 
-/*関数名*/
-fn function_name(&mut Vec<i32>){
+/*関数名*/ 
+// "識別子"
+// "識別子"
+fn function_name(parser:&mut Vec<i32>){
 
 }
 
 
 /*式の並び*/
-fn sequence_of_expressions(&mut Vec<i32>){
+// ε | <式> {“,” <式>}
+fn sequence_of_expressions(parser:&mut Vec<i32>){
 
 
 
