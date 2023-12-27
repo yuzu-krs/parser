@@ -211,19 +211,41 @@ fn is_special_character(c: char, parser: &mut Vec<i32>) -> bool {
 
 //iter.next() で次のトークンへ
 
+/*###############*/
+/*ここから構文解析*/
+/*###############*/
+
 /*プログラム*/
 // {<解釈単位>“;”}
 fn program(tokens: &mut std::slice::Iter<i32>) {
     // イテレータをpeekableに変換
     let mut token = tokens.peekable();
-
     // 先読みが可能かチェックして表示
-    if let Some(&next_token) = token.peek() {
-        println!("{}", next_token);
-        token.next();
+    while let Some(&next_token) = token.peek() {
+        //<解釈単位>のFirst集合
+        match next_token {
+            //“識別子”, “var”, “read”, “print”, “println”, “repeat”
+            1 | 2 | 3 | 4 | 5 | 7 => {
+                //<解釈単位>
+                unit_of_interpretation(&mut token);
+                //先読み
+                token.next();
+                //先読みチェック
+                if let Some(&next_token) = token.peek() {
+                    //";"
+                    if *next_token == 19 {
+                        token.next();
+                    } else {
+                        panic!(";がない");
+                    }
+                }
+            }
+            _ => {
+                //それ以外
+                panic!("文法エラー11");
+            }
+        }
     }
-
-    unit_of_interpretation(&mut token);
 }
 
 /*解釈単位*/
@@ -231,21 +253,31 @@ fn program(tokens: &mut std::slice::Iter<i32>) {
 fn unit_of_interpretation(tokens: &mut std::iter::Peekable<&mut std::slice::Iter<i32>>) {
     // ここで最後の部分を実行
     if let Some(&next_token) = tokens.peek() {
-        println!("{}", next_token);
+        match next_token {
+            //First:"var"
+            2 => {
+                //<変数宣言>
+                variable_declaration(tokens);
+            }
+            _ => {
+                //それ以外
+                panic!("文法エラー");
+            }
+        }
+
         tokens.next();
     }
-    variable_assignment(tokens);
 }
 
-/*変数代入*/
-// <変数名> “:=” <式>
-fn variable_assignment(tokens: &mut std::iter::Peekable<&mut std::slice::Iter<i32>>) {
-    // 同様に次のトークンも表示
-    if let Some(&next_token) = tokens.peek() {
-        println!("{}", next_token);
-        tokens.next();
-    }
-}
+// /*変数代入*/
+// // <変数名> “:=” <式>
+// fn variable_assignment(tokens: &mut std::iter::Peekable<&mut std::slice::Iter<i32>>) {
+//     // 同様に次のトークンも表示
+//     if let Some(&next_token) = tokens.peek() {
+//         println!("{}", next_token);
+//         tokens.next();
+//     }
+// }
 
 /*
 /*変数名*/
@@ -253,10 +285,12 @@ fn variable_assignment(tokens: &mut std::iter::Peekable<&mut std::slice::Iter<i3
 // “識別子”
 fn variable_name(parser: &mut Vec<i32>) {}
 
+
+
 /*式*/
 //  [“+” | “-”] <項> {“+” <項> | “-” <項> }
 // “+”, “-”, “(”, “整数”, “実数”, “識別子”, “@”
-fn formula(parser: &mut Vec<i32>) {}
+fn formula(tokens: &mut std::iter::Peekable<&mut std::slice::Iter<i32>>) {}
 
 /*項*/
 // <因子> {“*” <因子> | “/” <因子> | “div” <因子> | “%” <因子>}
@@ -267,12 +301,41 @@ fn term(parser: &mut Vec<i32>) {}
 // “(” <式>“)” | “整数” | “実数” | <変数名> | <関数呼出>
 // “(”, “整数”, “実数”, “識別子”, “@”
 fn factor(parser: &mut Vec<i32>) {}
-
+*/
 /*変数宣言*/
 //  “var” <変数名> [“:=” <式>]
-// “var”
-fn variable_declaration(parser: &mut Vec<i32>) {}
+fn variable_declaration(tokens: &mut std::iter::Peekable<&mut std::slice::Iter<i32>>) {
+    if let Some(&next_token) = tokens.peek() {
+        //"var"
+        if *next_token == 2 {
+            tokens.next();
+            //<変数名>
+            if *next_token == 1 {
+                tokens.next();
+                //":="
+                if *next_token == 22 {
+                    //     tokens.next();
+                    //     //“+”, “-”, “(”, “整数”, “実数”, “識別子”, “@”
+                    //     match next_token {
+                    //         12 | 13 | 17 | 9 | 10 | 1 | 21 => {
+                    //             formula(tokens);
+                    //         }
+                    //         _ => {
+                    //             panic!("構文エラー");
+                    //         }
+                    //     }
+                } else {
+                    //なくてもよい
+                }
+            }
+        } else {
+            panic!("構文エラーvarなし");
+        }
+        tokens.next();
+    }
+}
 
+/*
 /*変数入力*/
 // “read” “(” <変数名> “)”
 // “read”
